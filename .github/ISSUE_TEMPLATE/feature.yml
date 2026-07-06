@@ -1,0 +1,21 @@
+name: Mejora
+description: Propone una mejora de negocio o experiencia
+title: "[Mejora]: "
+labels: [enhancement]
+body:
+  - type: textarea
+    attributes:
+      label: Problema que resuelve
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Resultado esperado
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Criterios de aceptación
+    validations:
+      required: true
+

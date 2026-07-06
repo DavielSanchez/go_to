@@ -1,0 +1,30 @@
+name: Promote environment
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Entorno que recibirá la versión validada
+        required: true
+        type: choice
+        options: [development, staging, production]
+
+permissions:
+  contents: read
+
+jobs:
+  validate-promotion:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Promotion boundary
+        run: echo "Build validated for ${{ inputs.environment }}. Connect the hosting provider in this protected job."
+

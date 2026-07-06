@@ -1,0 +1,25 @@
+name: Reporte de error
+description: Registra un defecto reproducible
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: textarea
+    attributes:
+      label: Comportamiento actual
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Pasos para reproducir
+    validations:
+      required: true
+  - type: dropdown
+    attributes:
+      label: Rol afectado
+      options: [Empleado, Conductor, Supervisor, Workforce, RRHH, Operaciones, Administrador, Otro]
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Evidencia y entorno
+

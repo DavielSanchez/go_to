@@ -1,0 +1,6 @@
+import { Router } from 'express'
+import { AuditLog,Boarding,Route,TransportRequest,Vehicle } from '../models.js'
+import { asyncHandler,endOfDay,startOfDay } from '../utils.js'
+const router=Router()
+router.get('/',asyncHandler(async(req,res)=>{const date=startOfDay(req.query.date),range={$gte:date,$lte:endOfDay(date)};const [eligible,confirmed,requests,routes,boarded,audit]=await Promise.all([TransportRequest.countDocuments({serviceDate:range,status:{$ne:'rejected'}}),TransportRequest.countDocuments({serviceDate:range,status:{$in:['confirmed','assigned','boarded']}}),TransportRequest.find({serviceDate:range}).populate('employee','name department').lean(),Route.find({serviceDate:range}).populate('vehicle').populate('driver').lean(),Boarding.countDocuments({boardedAt:range,validation:{$in:['allowed','ad_hoc']}}),AuditLog.find().populate('actor','name').sort({createdAt:-1}).limit(8).lean()]);const seats=routes.reduce((n,r)=>n+(r.vehicle?.capacity||0),0),assigned=routes.reduce((n,r)=>n+r.passengers.length,0);res.json({data:{metrics:{eligible,confirmed,vehicles:routes.length,occupancy:seats?Math.round(assigned/seats*100):0,exceptions:requests.filter(x=>x.exceptional&&x.approvalStatus==='pending').length,boarded,noShows:Math.max(0,confirmed-boarded)},routes,audit}})}))
+export default router
